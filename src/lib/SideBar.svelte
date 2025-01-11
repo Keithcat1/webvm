@@ -23,21 +23,36 @@
 	let activeInfo = null; // Tracks currently visible info
 	let lastHoveredInfo = null; // Tracks last hovered info
 	let isPanelHovered = false; // Tracks if info panel is hovered
-	let hideTimeout = null; // Timeout for hiding info panel
+	let hideTimeout = 0; // Timeout for hiding info panel
 	function showInfo(info) {
-		clearTimeout(hideTimeout); // Cancel timeout
+		if (hideTimeout) {
+			hideTimeout = 0;
+		}
 		if (info !== lastHoveredInfo) {
 			activeInfo = info;
 			lastHoveredInfo = info;
 		}
 	}
 	function hideInfo() {
-		hideTimeout = setTimeout(() => {
-			if (!isPanelHovered) {
-				activeInfo = null;
-				lastHoveredInfo = null;
-			}
-		}, 400);
+		if (!hideTimeout) {
+			hideTimeout = setTimeout(() => {
+				if (!isPanelHovered) {
+					activeInfo = null;
+					lastHoveredInfo = null;
+				}
+				hideTimeout = 0;
+			}, 400);
+		}
+	}
+	function handleMouseOverPanel() {
+		isPanelHovered = true;
+		if (hideTimeout) {
+			hideTimeout = 0;
+		}
+	}
+	function handleMouseLeavePanel() {
+		isPanelHovered = false;
+		hideInfo();
 	}
 	function handleClick(icon) {
 		if (activeInfo === icon.info) {
@@ -62,21 +77,15 @@
 					on:click={() => handleClick(i)}
 				/>
 			{:else}
-				<div class="grow" style="pointer-events: none;"></div>
+				<div class="grow pointer-events-none"></div>
 			{/if}
 		{/each}
 	</div>
 	<div
 		class="flex flex-col gap-5 shrink-0 w-80 h-full z-10 p-2 bg-neutral-600 text-gray-100 opacity-95"
 		class:hidden={!activeInfo}
-		on:mouseover={() => {
-			isPanelHovered = true;
-			clearTimeout(hideTimeout);
-		}}
-		on:mouseleave={() => {
-			isPanelHovered = false;
-			hideInfo();
-		}}
+		on:mouseover={handleMouseOverPanel}
+		on:mouseleave={handleMouseLeavePanel}
 	>
 		{#if activeInfo === 'Information'}
 			<InformationTab>
