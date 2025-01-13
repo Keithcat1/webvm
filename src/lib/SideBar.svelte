@@ -24,29 +24,35 @@
 	let lastHoveredInfo = null; // Tracks last hovered info
 	let isPanelHovered = false; // Tracks if info panel is hovered
 	let hideTimeout = 0; // Timeout for hiding info panel
+
 	function showInfo(info) {
+		// Clears and reset the active hideTimeout to stop the panel from being hidden
 		if (hideTimeout) {
+			clearTimeout(hideTimeout);
 			hideTimeout = 0;
 		}
+		// Updates activeInfo and lastHoveredInfo to track the hovered icon, then shows the panel with the hovered icon's info
 		if (info !== lastHoveredInfo) {
 			activeInfo = info;
 			lastHoveredInfo = info;
 		}
 	}
 	function hideInfo() {
+		// Set a timeout to hide the panel after 400ms, but only if the panel isn't hovered
 		if (!hideTimeout) {
-			hideTimeout = setTimeout(() => {
-				if (!isPanelHovered) {
+			if (!isPanelHovered) {
+				hideTimeout = setTimeout(() => {
 					activeInfo = null;
 					lastHoveredInfo = null;
-				}
-				hideTimeout = 0;
-			}, 400);
+					hideTimeout = 0;
+				}, 400);
+			}
 		}
 	}
 	function handleMouseOverPanel() {
 		isPanelHovered = true;
 		if (hideTimeout) {
+			clearTimeout(hideTimeout);
 			hideTimeout = 0;
 		}
 	}
@@ -54,7 +60,9 @@
 		isPanelHovered = false;
 		hideInfo();
 	}
+	// Toggles the info panel for the clicked icon
 	function handleClick(icon) {
+		// Hides the panel if the icon is active. Otherwise, shows the panel with info
 		if (activeInfo === icon.info) {
 			activeInfo = null;
 		} else {
