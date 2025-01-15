@@ -21,7 +21,6 @@
 		{ icon: 'fab fa-github', info: 'GitHub', activity: null },
 	];
 	let activeInfo = null; // Tracks currently visible info
-	let lastHoveredInfo = null; // Tracks last hovered info
 	let hideTimeout = 0; // Timeout for hiding info panel
 
 	function showInfo(info) {
@@ -30,22 +29,18 @@
 			clearTimeout(hideTimeout);
 			hideTimeout = 0;
 		}
-		// Updates activeInfo and lastHoveredInfo to track the hovered icon, then shows the panel with the hovered icon's info
-		if (info !== lastHoveredInfo) {
-			activeInfo = info;
-			lastHoveredInfo = info;
-		}
+		activeInfo = info;
 	}
 	function hideInfo() {
+		// Hides the panel after 400ms if the mouse leaves. Re-enters resets the timeout, keeping the panel open.
 		if (!hideTimeout) {
-			hideTimeout = setTimeout(() => {
-				activeInfo = null;
-				lastHoveredInfo = null;
-				hideTimeout = 0;
-			}, 400);
+				hideTimeout = setTimeout(() => {
+					activeInfo = null;
+					hideTimeout = 0;
+				}, 400);
+			}
 		}
-	}
-	function handleMouseOverPanel() {
+	function handleMouseEnterPanel() {
 		if (hideTimeout) {
 			clearTimeout(hideTimeout);
 			hideTimeout = 0;
@@ -86,7 +81,7 @@
 	<div
 		class="flex flex-col gap-5 shrink-0 w-80 h-full z-10 p-2 bg-neutral-600 text-gray-100 opacity-95"
 		class:hidden={!activeInfo}
-		on:mouseover={handleMouseOverPanel}
+		on:mouseenter={handleMouseEnterPanel}
 		on:mouseleave={handleMouseLeavePanel}
 	>
 		{#if activeInfo === 'Information'}
