@@ -20,36 +20,30 @@
 		{ icon: 'fab fa-discord', info: 'Discord', activity: null },
 		{ icon: 'fab fa-github', info: 'GitHub', activity: null },
 	];
-	let activeInfo = null; // Tracks currently visible info
-	let hideTimeout = 0; // Timeout for hiding info panel
+	let activeInfo = null; // Tracks currently visible info.
+	let hideTimeout = 0; // Timeout for hiding info panel.
 
 	function showInfo(info) {
-		// Clears and reset the active hideTimeout to stop the panel from being hidden
-		if (hideTimeout) {
-			clearTimeout(hideTimeout);
-			hideTimeout = 0;
-		}
+		clearTimeout(hideTimeout);
+		hideTimeout = 0;
 		activeInfo = info;
 	}
 	function hideInfo() {
-		// Hides the panel after 400ms if the mouse leaves. Re-enters resets the timeout, keeping the panel open.
-		if (!hideTimeout) {
-				hideTimeout = setTimeout(() => {
-					activeInfo = null;
-					hideTimeout = 0;
-				}, 400);
-			}
-		}
+		// Prevents multiple timers and hides the info panel after 400ms unless interrupted.
+		clearTimeout(hideTimeout);
+		hideTimeout = setTimeout(() => {
+			activeInfo = null;
+			hideTimeout = null;
+		}, 400);
+	}
 	function handleMouseEnterPanel() {
-		if (hideTimeout) {
-			clearTimeout(hideTimeout);
-			hideTimeout = 0;
-		}
+		clearTimeout(hideTimeout);
+		hideTimeout = 0;
 	}
 	function handleMouseLeavePanel() {
 		hideInfo();
 	}
-	// Toggles the info panel for the clicked icon
+	// Toggles the info panel for the clicked icon.
 	function handleClick(icon) {
 		// Hides the panel if the icon is active. Otherwise, shows the panel with info.
 		if (activeInfo === icon.info) {
