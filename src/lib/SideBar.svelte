@@ -33,7 +33,7 @@
 		clearTimeout(hideTimeout);
 		hideTimeout = setTimeout(() => {
 			activeInfo = null;
-			hideTimeout = null;
+			hideTimeout = 0;
 		}, 400);
 	}
 	function handleMouseEnterPanel() {
