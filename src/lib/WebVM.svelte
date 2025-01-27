@@ -615,7 +615,7 @@
 			</div>
 		{/if}
         <ol role="log">
-        {#each srMessages as message, message}
+        {#each srMessages as message}
             <li>{message}</li>
         {/each}
         </ol>
