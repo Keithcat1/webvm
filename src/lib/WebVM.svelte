@@ -592,6 +592,12 @@
 			return new Error("Error: Invalid tool syntax");
 		}
 	}
+const srInput = $state("");
+const srMessages = $state([]);
+term.onData (srMessages.push);
+const srSubmit = (() {
+    term.input(srInput);
+}
 </script>
 
 <main class="relative w-full h-full">
@@ -605,7 +611,15 @@
 				<canvas class="w-full h-full cursor-none" id="display"></canvas>
 			</div>
 		{/if}
-		<div class="absolute top-0 bottom-0 left-14 right-0 p-1 scrollbar" id="console">
+        <ol role="log">
+        {#each srMessages as message, message}
+            <li>{message}</li>
+        {/each}
+        </ol>
+        <form>
+        <textaria title="Console" bind:value={srSubmit} on:submit|preventDefault={srInput}>
+        </form>
+		<div class="absolute top-0 bottom-0 left-14 right-0 p-1 scrollbar" id="console" hidden>
 		</div>
 	</div>
 </main>
