@@ -10,7 +10,7 @@
 	export let buttonText;
 </script>
 
-<a href={clickUrl} target="_blank" on:click={clickHandler} on:contextmenu={rightClickHandler}><p class="flex flex-row items-center {bgColor} p-2 rounded-md shadow-md shadow-neutral-900 {(clickUrl != null || clickHandler != null) ? `${hoverColor} cursor-pointer` : ""}" title={buttonTooltip}>
+<a href={clickUrl} target="_blank" on:click={clickHandler} on:contextmenu={rightClickHandler} aria-label={buttonTooltip} ><p class="flex flex-row items-center {bgColor} p-2 rounded-md shadow-md shadow-neutral-900 {(clickUrl != null || clickHandler != null) ? `${hoverColor} cursor-pointer` : ""}" title={buttonTooltip}>
 {#if buttonImage}
 <img src={buttonImage} class="inline w-8 h-8"/>
 {:else if buttonIcon}
