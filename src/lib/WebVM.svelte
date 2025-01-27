@@ -18,8 +18,8 @@
 	export let diskLatencies = [];
 	export let activityEventsInterval = 0;
 
-    const srInput = $state("");
-    const srMessages = $state([]);
+    let srInput = $state("");
+    let srMessages = $state([]);
     const srSubmit = () => {
         term.input(srInput);
     };
