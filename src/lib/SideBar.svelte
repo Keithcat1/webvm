@@ -40,9 +40,6 @@
 		clearTimeout(hideTimeout);
 		hideTimeout = 0;
 	}
-	function handleMouseLeavePanel() {
-		hideInfo();
-	}
 	// Toggles the info panel for the clicked icon.
 	function handleClick(icon) {
 		// Hides the panel if the icon is active. Otherwise, shows the panel with info.
@@ -56,7 +53,7 @@
 	export let handleTool;
 </script>
 
-<div class="flex flex-row w-14 h-full bg-neutral-700" on:mouseleave={hideInfo}>
+<div class="flex flex-row w-14 h-full bg-neutral-700" >
 	<div class="flex flex-col shrink-0 w-14 text-gray-300">
 		{#each icons as i}
 			{#if i}
@@ -68,7 +65,7 @@
 					on:click={() => handleClick(i)}
 				/>
 			{:else}
-				<div class="grow pointer-events-none"></div>
+				<div class="grow" on:mouseenter={handleMouseEnterPanel}></div>
 			{/if}
 		{/each}
 	</div>
@@ -76,7 +73,7 @@
 		class="flex flex-col gap-5 shrink-0 w-80 h-full z-10 p-2 bg-neutral-600 text-gray-100 opacity-95"
 		class:hidden={!activeInfo}
 		on:mouseenter={handleMouseEnterPanel}
-		on:mouseleave={handleMouseLeavePanel}
+		on:mouseleave={hideInfo}
 	>
 		{#if activeInfo === 'Information'}
 			<InformationTab>
