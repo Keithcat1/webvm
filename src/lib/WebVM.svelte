@@ -598,6 +598,7 @@ term.onData (srMessages.push);
 const srSubmit = (() => {
     term.input(srInput);
 }
+}
 </script>
 
 <main class="relative w-full h-full">
