@@ -18,6 +18,15 @@
 	export let diskLatencies = [];
 	export let activityEventsInterval = 0;
 
+    const srInput = $state("");
+    const srMessages = $state([]);
+    term.onData (srMessages.push);
+    const srSubmit = (() => {
+        term.input(srInput);
+    };
+
+
+
 	var term = null;
 	var cx = null;
 	var fitAddon = null;
@@ -592,12 +601,6 @@
 			return new Error("Error: Invalid tool syntax");
 		}
 	}
-const srInput = $state("");
-const srMessages = $state([]);
-term.onData (srMessages.push);
-const srSubmit = (() => {
-    term.input(srInput);
-}
 }
 </script>
 
