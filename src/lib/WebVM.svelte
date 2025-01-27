@@ -595,7 +595,7 @@
 const srInput = $state("");
 const srMessages = $state([]);
 term.onData (srMessages.push);
-const srSubmit = (() {
+const srSubmit = (() => {
     term.input(srInput);
 }
 </script>
