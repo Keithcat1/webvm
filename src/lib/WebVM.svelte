@@ -20,7 +20,6 @@
 
     const srInput = $state("");
     const srMessages = $state([]);
-    term.onData (srMessages.push);
     const srSubmit = () => {
         term.input(srInput);
     };
@@ -208,6 +207,7 @@
 		window.addEventListener("resize", handleResize);
 		term.focus();
 		term.onData(readData);
+        term.onData (srMessages.push);
 		// Avoid undesired default DnD handling
 		function preventDefaults (e) {
 			e.preventDefault()
@@ -601,7 +601,6 @@
 			return new Error("Error: Invalid tool syntax");
 		}
 	}
-}
 </script>
 
 <main class="relative w-full h-full">
