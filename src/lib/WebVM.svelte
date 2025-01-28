@@ -39,6 +39,7 @@
 		event.preventDefault();
 		event.stopPropagation();
 	};
+let loaded = false;
 	const decoder = new TextDecoder("utf-8");
 	const srHandleOutput = (buf) => {
 		const string = decoder.decode(buf);
@@ -278,6 +279,7 @@
 			setScreenSize(display);
 		}
 		// Run the command in a loop, in case the user exits
+        loaded = true;
 		while (true) {
 			await cx.run(configObj.cmd, configObj.args, configObj.opts);
 		}
@@ -311,7 +313,7 @@
 			{/each}
 		</ol>
 		<form on:submit={srSubmit}>
-			<input title="Console" type="text" bind:value={srInput} />
+			<input disabled={!loaded} title={loaded ? "Console" : "Loading..."} type="text" bind:value={srInput} />
 		</form>
 	</div>
 </main>
