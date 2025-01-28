@@ -310,12 +310,11 @@
 				<canvas class="w-full h-full cursor-none" id="display"></canvas>
 			</div>
 		{/if}
-		<div aria-live="polite" aria-atomic="false">
+		<ul role="log">
 			{#each srMessages as message}
-					{message}
-					<br/>
+					<li>{message}</li>li>
 			{/each}
-		</div>
+		</ul>
 		<form on:submit={srSubmit}>
 			<input
 				disabled={!loaded}
