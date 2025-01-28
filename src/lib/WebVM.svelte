@@ -312,7 +312,7 @@
 			</div>
 		{/if}
 		<div aria-live="polite" aria-atomic="false">
-			{#each srMessages as message (message)}
+			{#each srMessages as message}
 					{message}
 					<br/>
 			{/each}
