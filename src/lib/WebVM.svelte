@@ -309,9 +309,9 @@ let loaded = false;
 				<canvas class="w-full h-full cursor-none" id="display"></canvas>
 			</div>
 		{/if}
-		<ul role="log">
+		<div aria-live="polite">
 			{#each srMessages as message(message)}
-				<li textContents={message}></li>
+				<span>{message}</span>
 			{/each}
 		</ul>
 		<form on:submit={srSubmit}>
