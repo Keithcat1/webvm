@@ -335,7 +335,7 @@
 		cx.registerCallback("processCreated", handleProcessCreated);
 		term.scrollToBottom();
 //		cxReadFunc = cx.setCustomConsole(writeData, term.cols, term.rows);
-        cx.setConsole(document.getElementByID("console"));
+        cx.setConsole(document.getElementById("console"));
 		const display = document.getElementById("display");
 		if(display)
 		{
