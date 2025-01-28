@@ -22,6 +22,7 @@
     let srMessages = [];
     const srSubmit = () => {
         term.input(srInput);
+        srInput = "";
     };
 
 
@@ -51,6 +52,7 @@
 	}
 	function printMessage(msg)
 	{
+        srMessages.push(msg);
 		for(var i=0;i<msg.length;i++)
 			term.write(msg[i] + "\n");
 	}
@@ -620,7 +622,7 @@
         {/each}
         </ol>
         <form>
-        <textarea title="Console" bind:value={srInput} on:submit|preventDefault={srInput}></textarea>
+        <input title="Console" bind:value={srInput} on:submit|preventDefault={srInput}></input>
         </form>
 		<div class="absolute top-0 bottom-0 left-14 right-0 p-1 scrollbar" id="console" hidden>
 		</div>
