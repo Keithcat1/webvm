@@ -26,6 +26,7 @@
 	export let cpuActivityEvents = [];
 	export let diskLatencies = [];
 	export let activityEventsInterval = 0;
+let lastMessage = "";
 
 	let srInput = "";
 	let srMessages = [];
@@ -46,6 +47,7 @@
 		if (data.length == 1) return;
 		console.log(`Output: ${data}`);
 		srPushMessage(data);
+		lastMessage = data;
 	};
 
 	const srPushMessage = (msg) => {
@@ -309,12 +311,13 @@
 			<div class="absolute top-0 bottom-0 left-14 right-0">
 				<canvas class="w-full h-full cursor-none" id="display"></canvas>
 			</div>
+			<div aria-live="polite">{lastMessage}</div>
 		{/if}
-		<ul role="log">
+		<div>
 			{#each srMessages as message}
-					<li>{message}</li>li>
+					{message}
 			{/each}
-		</ul>
+		</div>
 		<form on:submit={srSubmit}>
 			<input
 				disabled={!loaded}
