@@ -39,11 +39,12 @@
 		event.preventDefault();
 		event.stopPropagation();
 	};
-let loaded = false;
+	let loaded = false;
 	const decoder = new TextDecoder("utf-8");
 	const srHandleOutput = (buf) => {
 		let data = decoder.decode(buf);
-        console.log(`Output: ${data}`);
+		if (data.length == 1) return;
+		console.log(`Output: ${data}`);
 		srPushMessage(data);
 	};
 
@@ -281,7 +282,7 @@ let loaded = false;
 			setScreenSize(display);
 		}
 		// Run the command in a loop, in case the user exits
-        loaded = true;
+		loaded = true;
 		while (true) {
 			await cx.run(configObj.cmd, configObj.args, configObj.opts);
 		}
@@ -309,13 +310,22 @@ let loaded = false;
 				<canvas class="w-full h-full cursor-none" id="display"></canvas>
 			</div>
 		{/if}
-		<div aria-live="polite">
-			{#each srMessages as message(message)}
-				<span>{message}</span>
+		<div aria-live="polite" aria-atomic="false">
+			{#each srMessages as message (message)}
+				{#if (message = "\n")}
+					<br />
+				{:else}
+					<span>{message}</span>
+				{/if}
 			{/each}
 		</div>
 		<form on:submit={srSubmit}>
-			<input disabled={!loaded} title={loaded ? "Console" : "Loading..."} type="text" bind:value={srInput} />
+			<input
+				disabled={!loaded}
+				title={loaded ? "Console" : "Loading..."}
+				type="text"
+				bind:value={srInput}
+			/>
 		</form>
 	</div>
 </main>
