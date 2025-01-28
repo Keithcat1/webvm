@@ -309,11 +309,11 @@ let loaded = false;
 				<canvas class="w-full h-full cursor-none" id="display"></canvas>
 			</div>
 		{/if}
-		<ol role="log">
+		<ul role="log">
 			{#each srMessages as message}
 				<li>{message}</li>
 			{/each}
-		</ol>
+		</ul>
 		<form on:submit={srSubmit}>
 			<input disabled={!loaded} title={loaded ? "Console" : "Loading..."} type="text" bind:value={srInput} />
 		</form>
