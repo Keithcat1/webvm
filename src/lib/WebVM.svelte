@@ -46,11 +46,11 @@
 		if (data.length == 1) return;
 		console.log(`Output: ${data}`);
 		srPushMessage(data);
+		srMessages.push(msg);
+			srMessages = srMessages; // make reactive
 	};
 
-	const srPushMessage = (msg) => {
-		srMessages = [...srMessages, msg];
-	};
+	const srPushMessage = (msg) => {};
 
 	var term = null;
 	var cx = null;
