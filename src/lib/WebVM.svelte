@@ -20,6 +20,7 @@
 	} from "$lib/messages.js";
 	import { displayConfig } from "$lib/anthropic.js";
 
+	import stripAnsi from 'strip-ansi';
 	export let configObj = null;
 	export let processCallback = null;
 	export let cacheId = null;
@@ -30,9 +31,6 @@
 
 	let srInput = "";
 	let srMessages = [];
-	function stripAnsiEscapeCodes(text) {
-		return text.replace(/\x1b\[[0-9;]*m/g, "");
-	}
 
 	const srSubmit = (event) => {
 		console.log(`Got ${srInput}, ${event}, ${simulateTyping}`);
@@ -50,7 +48,7 @@
 		let data = decoder.decode(buf);
 		if (data.length == 1) return;
 		console.log(`Output: ${data}`);
-		data = stripAnsiEscapeCodes(data);
+		data = stripAnsi(data);
 		srPushMessage(data);
 		lastMessage = data;
 	};
