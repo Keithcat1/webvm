@@ -30,7 +30,7 @@
 	let srInput = "";
 	let srMessages = [];
 	const srSubmit = (event) => {
-		console.log(`Got ${srInput}, ${event}`);
+		console.log(`Got ${srInput}, ${event}, ${simulateTyping}`);
 		for (var i = 0; i < srInput.length; i++) {
 			simulateTyping(srInput.charCodeAt(i));
 		}
