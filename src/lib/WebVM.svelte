@@ -26,10 +26,14 @@
 	export let cpuActivityEvents = [];
 	export let diskLatencies = [];
 	export let activityEventsInterval = 0;
-let lastMessage = "";
+	let lastMessage = "";
 
 	let srInput = "";
 	let srMessages = [];
+	function stripAnsiEscapeCodes(text) {
+		return text.replace(/\x1b\[[0-9;]*m/g, "");
+	}
+
 	const srSubmit = (event) => {
 		console.log(`Got ${srInput}, ${event}, ${simulateTyping}`);
 		for (var i = 0; i < srInput.length; i++) {
@@ -46,6 +50,7 @@ let lastMessage = "";
 		let data = decoder.decode(buf);
 		if (data.length == 1) return;
 		console.log(`Output: ${data}`);
+		data = stripAnsiEscapeCodes(data);
 		srPushMessage(data);
 		lastMessage = data;
 	};
@@ -314,7 +319,7 @@ let lastMessage = "";
 		{/if}
 		<div role="log">
 			{#each srMessages as message}
-					<p>{message}</p>
+				<p>{message}</p>
 			{/each}
 		</div>
 		<form on:submit={srSubmit}>
