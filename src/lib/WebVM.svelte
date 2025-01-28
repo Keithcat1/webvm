@@ -21,14 +21,18 @@
     let srInput = "";
     let srMessages = [];
     const srSubmit = (event) => {
-        console.log(srInput);
+        console.log(["Got", srInput, event]);
         term.input(srInput);
         term.input("\n");
         srInput = "";
     event.preventDefault();
+        event.stopPropagation();
     };
 
-
+    const srPushMessage = (msg) => {
+        console.log(["Got", msg]);
+        srMessages.push(msg);
+};
 
 	var term = null;
 	var cx = null;
@@ -55,7 +59,7 @@
 	}
 	function printMessage(msg)
 	{
-        srMessages.push(msg);
+        srPushMessage(msg);
 		for(var i=0;i<msg.length;i++)
 			term.write(msg[i] + "\n");
 	}
@@ -212,7 +216,7 @@
 		window.addEventListener("resize", handleResize);
 		term.focus();
 		term.onData(readData);
-        term.onData (srMessages.push);
+        term.onData ((msg) => srPushMessage(msg) );
 		// Avoid undesired default DnD handling
 		function preventDefaults (e) {
 			e.preventDefault()
