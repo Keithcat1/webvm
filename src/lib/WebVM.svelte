@@ -34,7 +34,7 @@
 		for (var i = 0; i < srInput.length; i++) {
 			simulateTyping(srInput.charCodeAt(i));
 		}
-		simulateTyping("\n");
+		simulateTyping("\n".charCodeAt(0));
 		srInput = "";
 		event.preventDefault();
 		event.stopPropagation();
@@ -311,7 +311,7 @@ let loaded = false;
 		{/if}
 		<ul role="log">
 			{#each srMessages as message(message)}
-				<li innerText={message}></li>
+				<li textContents={message}></li>
 			{/each}
 		</ul>
 		<form on:submit={srSubmit}>
