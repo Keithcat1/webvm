@@ -21,6 +21,7 @@
     let srInput = "";
     let srMessages = [];
     const srSubmit = (event) => {
+        console.log(srInput);
         term.input(srInput);
         term.input("\n");
         srInput = "";
@@ -623,8 +624,8 @@
             <li>{message}</li>
         {/each}
         </ol>
-        <form>
-        <input title="Console" bind:value={srInput} onsubmit={srSubmit}>
+        <form on:submit={srSubmit}>
+        <input title="Console" type="text" bind:value={srInput}>
         </form>
 		<div class="absolute top-0 bottom-0 left-14 right-0 p-1 scrollbar" id="console" hidden>
 		</div>
