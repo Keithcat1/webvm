@@ -43,6 +43,7 @@ let loaded = false;
 	const decoder = new TextDecoder("utf-8");
 	const srHandleOutput = (buf) => {
 		const string = decoder.decode(buf);
+        console.log(`Output: ${string}`);
 		srPushMessage(string);
 	};
 
@@ -174,6 +175,7 @@ let loaded = false;
 	}
 	var curInnerWidth = 0;
 	var curInnerHeight = 0;
+
 	async function initTerminal() {
 		if (configObj.printIntro) printMessage(introMessage);
 		try {
