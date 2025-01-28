@@ -314,7 +314,7 @@ let lastMessage = "";
 		{/if}
 		<div role="log">
 			{#each srMessages as message}
-					<p>{message}</p>p>
+					<p>{message}</p>
 			{/each}
 		</div>
 		<form on:submit={srSubmit}>
