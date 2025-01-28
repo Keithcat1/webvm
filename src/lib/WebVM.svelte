@@ -220,10 +220,10 @@
 			e.preventDefault()
 			e.stopPropagation()
 		}
-		consoleDiv.addEventListener("dragover", preventDefaults, false);
-		consoleDiv.addEventListener("dragenter", preventDefaults, false);
-		consoleDiv.addEventListener("dragleave", preventDefaults, false);
-		consoleDiv.addEventListener("drop", preventDefaults, false);
+
+
+
+
 		curInnerWidth = window.innerWidth;
 		curInnerHeight = window.innerHeight;
 		if(configObj.printIntro)
