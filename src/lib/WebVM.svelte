@@ -48,7 +48,7 @@ let loaded = false;
 	};
 
 	const srPushMessage = (msg) => {
-		srMessages.push(msg);
+		srMessages = [...srMessages, msg];
 	};
 
 	var term = null;
