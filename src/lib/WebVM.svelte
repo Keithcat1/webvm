@@ -334,7 +334,8 @@
 		cx.registerCallback("diskLatency", latencyCallback);
 		cx.registerCallback("processCreated", handleProcessCreated);
 		term.scrollToBottom();
-		cxReadFunc = cx.setCustomConsole(writeData, term.cols, term.rows);
+//		cxReadFunc = cx.setCustomConsole(writeData, term.cols, term.rows);
+        cx.setConsole(document.getElementByID("console"));
 		const display = document.getElementById("display");
 		if(display)
 		{
@@ -628,6 +629,7 @@
             <li>{message}</li>
         {/each}
         </ol>
+        <pre id="console"></pre>
         <form on:submit={srSubmit}>
         <input title="Console" type="text" bind:value={srInput}>
         </form>
