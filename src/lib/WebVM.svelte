@@ -209,8 +209,6 @@
 		term.loadAddon(fitAddon);
 		var linkAddon = new WebLinksAddon();
 		term.loadAddon(linkAddon);
-		const consoleDiv = document.getElementById("console");
-		term.open(consoleDiv);
 		term.scrollToTop();
 		fitAddon.fit();
 		window.addEventListener("resize", handleResize);
@@ -633,7 +631,5 @@
         <form on:submit={srSubmit}>
         <input title="Console" type="text" bind:value={srInput}>
         </form>
-		<div class="absolute top-0 bottom-0 left-14 right-0 p-1 scrollbar" id="console" hidden>
-		</div>
 	</div>
 </main>
