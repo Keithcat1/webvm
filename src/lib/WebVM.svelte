@@ -22,15 +22,23 @@
     let srMessages = [];
     const srSubmit = (event) => {
         console.log(["Got", srInput, event]);
-        term.input(srInput);
-        term.input("\n");
+        for(var i = 0; i < srInput.length; i++) {
+            simulateTyping(srInput.charCodeAt(i));
+        }
+        simulateTyping("\n");
         srInput = "";
     event.preventDefault();
         event.stopPropagation();
     };
+    const decoder = new TextDecoder("utf-8");
+    const encoder = new TextEncoder("utf-8");
+
+    const srHandleOutput = (buf) => {
+        const string = decoder.decode(buf);
+        srPushMessage(string);
+    };
 
     const srPushMessage = (msg) => {
-        console.log(["Got", msg]);
         srMessages.push(msg);
 };
 
@@ -38,6 +46,7 @@
 	var cx = null;
 	var fitAddon = null;
 	var cxReadFunc = null;
+var simulateTyping = null;
 	var blockCache = null;
 	var processCount = 0;
 	var curVT = 0;
@@ -333,7 +342,7 @@
 		cx.registerCallback("processCreated", handleProcessCreated);
 		term.scrollToBottom();
 //		cxReadFunc = cx.setCustomConsole(writeData, term.cols, term.rows);
-        cx.setConsole(document.getElementById("console"));
+        simulateTyping = cx.setCustomConsole(srHandleOutput, 40, 60);
 		const display = document.getElementById("display");
 		if(display)
 		{
