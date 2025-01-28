@@ -20,9 +20,11 @@
 
     let srInput = "";
     let srMessages = [];
-    const srSubmit = () => {
+    const srSubmit = (event) => {
         term.input(srInput);
+        term.input("\n");
         srInput = "";
+    event.preventDefault();
     };
 
 
@@ -622,7 +624,7 @@
         {/each}
         </ol>
         <form>
-        <input title="Console" bind:value={srInput} on:submit|preventDefault={srInput}>
+        <input title="Console" bind:value={srInput} onsubmit={srSubmit}>
         </form>
 		<div class="absolute top-0 bottom-0 left-14 right-0 p-1 scrollbar" id="console" hidden>
 		</div>
