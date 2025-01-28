@@ -179,7 +179,6 @@
 	var curInnerHeight = 0;
 
 	async function initTerminal() {
-		if (configObj.printIntro) printMessage(introMessage);
 		try {
 			await initCheerpX();
 		} catch (e) {
