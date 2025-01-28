@@ -21,7 +21,7 @@
     let srInput = "";
     let srMessages = [];
     const srSubmit = (event) => {
-        console.log(["Got", srInput, event]);
+        console.log(`"Got ${srInput}, ${event}");
         for(var i = 0; i < srInput.length; i++) {
             simulateTyping(srInput.charCodeAt(i));
         }
@@ -68,9 +68,8 @@ var simulateTyping = null;
 	}
 	function printMessage(msg)
 	{
-        srPushMessage(msg);
-		for(var i=0;i<msg.length;i++)
-			term.write(msg[i] + "\n");
+        for(var i of msg) {
+        srPushMessage(i);
 	}
 	function expireEvents(list, curTime, limitTime)
 	{
@@ -194,48 +193,9 @@ var simulateTyping = null;
 	}
 	var curInnerWidth = 0;
 	var curInnerHeight = 0;
-	function handleResize()
-	{
-		// Avoid spurious resize events caused by the soft keyboard
-		if(curInnerWidth == window.innerWidth && curInnerHeight == window.innerHeight)
-			return;
-		curInnerWidth = window.innerWidth;
-		curInnerHeight = window.innerHeight;
-		term.options.fontSize = computeXTermFontSize();
-		fitAddon.fit();
-		const display = document.getElementById("display");
-		if(display)
-			setScreenSize(display);
-	}
 	async function initTerminal()
-	{
-		const { Terminal } = await import('@xterm/xterm');
-		const { FitAddon } = await import('@xterm/addon-fit');
-		const { WebLinksAddon } = await import('@xterm/addon-web-links');
-		term = new Terminal({cursorBlink:true, convertEol:true, fontFamily:"monospace", fontWeight: 400, fontWeightBold: 700, fontSize: computeXTermFontSize()});
-        term.options.screenReaderMode = true;
-		fitAddon = new FitAddon();
-		term.loadAddon(fitAddon);
-		var linkAddon = new WebLinksAddon();
-		term.loadAddon(linkAddon);
-		term.scrollToTop();
-		fitAddon.fit();
-		window.addEventListener("resize", handleResize);
-		term.focus();
-		term.onData(readData);
-        term.onData ((msg) => srPushMessage(msg) );
-		// Avoid undesired default DnD handling
-		function preventDefaults (e) {
-			e.preventDefault()
-			e.stopPropagation()
-		}
-
-
-
-
-		curInnerWidth = window.innerWidth;
-		curInnerHeight = window.innerHeight;
-		if(configObj.printIntro)
+            {
+if(configObj.printIntro)
 			printMessage(introMessage);
 		try
 		{
@@ -247,19 +207,8 @@ var simulateTyping = null;
 			printMessage([e.toString()]);
 			return;
 		}
-	}
-	function handleActivateConsole(vt)
-	{
-		if(curVT == vt)
-			return;
-		curVT = vt;
-		if(vt != 7)
-			return;
-		// Raise the display to the foreground
-		const display = document.getElementById("display");
-		display.parentElement.style.zIndex = 5;
-		plausible("Display activated");
-	}
+    }
+
 	function handleProcessCreated()
 	{
 		processCount++;
@@ -340,14 +289,11 @@ var simulateTyping = null;
 		cx.registerCallback("diskActivity", hddCallback);
 		cx.registerCallback("diskLatency", latencyCallback);
 		cx.registerCallback("processCreated", handleProcessCreated);
-		term.scrollToBottom();
-//		cxReadFunc = cx.setCustomConsole(writeData, term.cols, term.rows);
         simulateTyping = cx.setCustomConsole(srHandleOutput, 40, 60);
 		const display = document.getElementById("display");
 		if(display)
 		{
 			setScreenSize(display);
-			cx.setActivateConsole(handleActivateConsole);
 		}
 		// Run the command in a loop, in case the user exits
 		while (true)
@@ -369,255 +315,7 @@ var simulateTyping = null;
 			return;
 		await blockCache.reset();
 		location.reload();
-	}
-	function getKmsInputElement()
-	{
-		// Find the CheerpX textare, it's attached to the body element
-		for(const node of document.body.children)
-		{
-			if(node.tagName == "TEXTAREA")
-				return node;
-		}
-		return null;
-	}
-	async function yieldHelper(timeout)
-	{
-		return new Promise(function(f2, r2)
-		{
-			setTimeout(f2, timeout);
-		});
-	}
-	async function kmsSendChar(textArea, charStr)
-	{
-		textArea.value = "_" + charStr;
-		var ke = new KeyboardEvent("keydown");
-		textArea.dispatchEvent(ke);
-		var ke = new KeyboardEvent("keyup");
-		textArea.dispatchEvent(ke);
-		await yieldHelper(0);
-	}
-	async function handleTool(tool)
-	{
-		if(tool.command)
-		{
-			var sentinel = "# End of AI command";
-			var buffer = term.buffer.active;
-			// Get the current cursor position
-			var marker = term.registerMarker();
-			var startLine = marker.line;
-			marker.dispose();
-			var ret = new Promise(function(f, r)
-			{
-				var callbackDisposer = term.onWriteParsed(function()
-				{
-					var curLength = buffer.length;
-					// Accumulate the output and see if the sentinel has been printed
-					var output = "";
-					for(var i=startLine + 1;i<curLength;i++)
-					{
-						var curLine = buffer.getLine(i).translateToString(true, 0, term.cols);;
-						if(curLine.indexOf(sentinel) >= 0)
-						{
-							// We are done, cleanup and return
-							callbackDisposer.dispose();
-							return f(output);
-						}
-						output += curLine + "\n";
-					}
-				});
-			});
-			term.input(tool.command);
-			term.input("\n");
-			term.input(sentinel);
-			term.input("\n");
-			return ret;
-		}
-		else if(tool.action)
-		{
-			// Desktop control
-			// TODO: We should have an explicit API to interact with CheerpX display
-			switch(tool.action)
-			{
-				case "screenshot":
-				{
-					// Insert a 3 seconds delay unconditionally, the reference implementation uses 2
-					await yieldHelper(3000);
-					var delayCount = 0;
-					var display = document.getElementById("display");
-					var dc = get(displayConfig);
-					if(screenshotCanvas == null)
-					{
-						screenshotCanvas = document.createElement("canvas");
-						screenshotCtx = screenshotCanvas.getContext("2d");
-					}
-					if(screenshotCanvas.width != dc.width || screenshotCanvas.height != dc.height)
-					{
-						screenshotCanvas.width = dc.width;
-						screenshotCanvas.height = dc.height;
-					}
-					while(1)
-					{
-						// Resize the canvas to a Claude compatible size
-						screenshotCtx.drawImage(display, 0, 0, display.width, display.height, 0, 0, dc.width, dc.height);
-						var dataUrl = screenshotCanvas.toDataURL("image/png");
-						if(dataUrl == lastScreenshot)
-						{
-							// Delay at most 3 times
-							if(delayCount < 3)
-							{
-								// TODO: Defensive message, validate and remove
-								console.warn("Identical screenshot, rate limiting");
-								delayCount++;
-								// Wait some time and retry
-								await yieldHelper(5000);
-								continue;
-							}
-						}
-						lastScreenshot = dataUrl;
-						// Remove prefix from the encoded data
-						dataUrl = dataUrl.substring("data:image/png;base64,".length);
-						var imageSrc = { type: "base64", media_type: "image/png", data: dataUrl };
-						var contentObj = { type: "image", source: imageSrc };
-						return [ contentObj ];
-					}
-				}
-				case "mouse_move":
-				{
-					var coords = tool.coordinate;
-					var dc = get(displayConfig);
-					dc.mouseX = coords[0] / dc.mouseMult;
-					dc.mouseY = coords[1] / dc.mouseMult;
-					var display = document.getElementById("display");
-					var clientRect = display.getBoundingClientRect();
-					var me = new MouseEvent('mousemove', { clientX: dc.mouseX + clientRect.left, clientY: dc.mouseY + clientRect.top });
-					display.dispatchEvent(me);
-					return null;
-				}
-				case "left_click":
-				{
-					var dc = get(displayConfig);
-					var display = document.getElementById("display");
-					var clientRect = display.getBoundingClientRect();
-					var me = new MouseEvent('mousedown', { clientX: dc.mouseX + clientRect.left, clientY: dc.mouseY + clientRect.top, button: 0 });
-					display.dispatchEvent(me);
-					var me = new MouseEvent('mouseup', { clientX: dc.mouseX + clientRect.left, clientY: dc.mouseY + clientRect.top, button: 0 });
-					display.dispatchEvent(me);
-					return null;
-				}
-				case "right_click":
-				{
-					var dc = get(displayConfig);
-					var display = document.getElementById("display");
-					var clientRect = display.getBoundingClientRect();
-					var me = new MouseEvent('mousedown', { clientX: dc.mouseX + clientRect.left, clientY: dc.mouseY + clientRect.top, button: 2 });
-					display.dispatchEvent(me);
-					var me = new MouseEvent('mouseup', { clientX: dc.mouseX + clientRect.left, clientY: dc.mouseY + clientRect.top, button: 2 });
-					display.dispatchEvent(me);
-					return null;
-				}
-				case "type":
-				{
-					var str = tool.text;
-					return new Promise(async function(f, r)
-					{
-						var textArea = getKmsInputElement();
-						for(var i=0;i<str.length;i++)
-						{
-							await kmsSendChar(textArea, str[i]);
-						}
-						f(null);
-					});
-				}
-				case "key":
-				{
-					var textArea = getKmsInputElement();
-					var key = tool.text;
-					// Support arbitrary order of modifiers
-					var isCtrl = false;
-					var isAlt = false;
-					var isShift = false;
-					while(1)
-					{
-						if(key.startsWith("shift+"))
-						{
-							isShift = true;
-							key = key.substr("shift+".length);
-							var ke = new KeyboardEvent("keydown", {keyCode: 0x10});
-							textArea.dispatchEvent(ke);
-							await yieldHelper(0);
-							continue;
-						}
-						else if(key.startsWith("ctrl+"))
-						{
-							isCtrl = true;
-							key = key.substr("ctrl+".length);
-							var ke = new KeyboardEvent("keydown", {keyCode: 0x11});
-							textArea.dispatchEvent(ke);
-							await yieldHelper(0);
-							continue;
-						}
-						else if(key.startsWith("alt+"))
-						{
-							isAlt = true;
-							key = key.substr("alt+".length);
-							var ke = new KeyboardEvent("keydown", {keyCode: 0x12});
-							textArea.dispatchEvent(ke);
-							await yieldHelper(0);
-							continue;
-						}
-						break;
-					}
-					var ret = null;
-					// Dispatch single chars directly and parse the rest
-					if(key.length == 1)
-					{
-						await kmsSendChar(textArea, key);
-					}
-					else
-					{
-						switch(tool.text)
-						{
-							case "Return":
-								await kmsSendChar(textArea, "\n");
-								break;
-							default:
-								// TODO: Support more key combinations
-								ret = new Error(`Error: Invalid key '${tool.text}'`);
-						}
-					}
-					if(isShift)
-					{
-						var ke = new KeyboardEvent("keyup", {keyCode: 0x10});
-						textArea.dispatchEvent(ke);
-						await yieldHelper(0);
-					}
-					if(isCtrl)
-					{
-						var ke = new KeyboardEvent("keyup", {keyCode: 0x11});
-						textArea.dispatchEvent(ke);
-						await yieldHelper(0);
-					}
-					if(isAlt)
-					{
-						var ke = new KeyboardEvent("keyup", {keyCode: 0x12});
-						textArea.dispatchEvent(ke);
-						await yieldHelper(0);
-					}
-					return ret;
-				}
-				default:
-				{
-					break;
-				}
-			}
-			return new Error("Error: Invalid action");
-		}
-		else
-		{
-			// We can get there due to model hallucinations
-			return new Error("Error: Invalid tool syntax");
-		}
-	}
+    }
 </script>
 
 <main class="relative w-full h-full">
@@ -636,7 +334,6 @@ var simulateTyping = null;
             <li>{message}</li>
         {/each}
         </ol>
-        <pre id="console"></pre>
         <form on:submit={srSubmit}>
         <input title="Console" type="text" bind:value={srInput}>
         </form>
