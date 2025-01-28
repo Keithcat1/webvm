@@ -622,7 +622,7 @@
         {/each}
         </ol>
         <form>
-        <input title="Console" bind:value={srInput} on:submit|preventDefault={srInput}></input>
+        <input title="Console" bind:value={srInput} on:submit|preventDefault={srInput}>
         </form>
 		<div class="absolute top-0 bottom-0 left-14 right-0 p-1 scrollbar" id="console" hidden>
 		</div>
