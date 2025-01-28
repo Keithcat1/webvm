@@ -313,7 +313,7 @@ let loaded = false;
 			{#each srMessages as message(message)}
 				<span>{message}</span>
 			{/each}
-		</ul>
+		</div>
 		<form on:submit={srSubmit}>
 			<input disabled={!loaded} title={loaded ? "Console" : "Loading..."} type="text" bind:value={srInput} />
 		</form>
