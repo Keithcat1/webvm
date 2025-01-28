@@ -42,9 +42,9 @@
 let loaded = false;
 	const decoder = new TextDecoder("utf-8");
 	const srHandleOutput = (buf) => {
-		const string = decoder.decode(buf);
-        console.log(`Output: ${string}`);
-		srPushMessage(string);
+		let data = decoder.decode(buf);
+        console.log(`Output: ${data}`);
+		srPushMessage(data);
 	};
 
 	const srPushMessage = (msg) => {
@@ -310,8 +310,8 @@ let loaded = false;
 			</div>
 		{/if}
 		<ul role="log">
-			{#each srMessages as message}
-				<li>{message}</li>
+			{#each srMessages as message(message)}
+				<li innerText={message}></li>
 			{/each}
 		</ul>
 		<form on:submit={srSubmit}>
