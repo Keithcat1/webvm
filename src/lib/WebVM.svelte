@@ -311,11 +311,10 @@ let lastMessage = "";
 			<div class="absolute top-0 bottom-0 left-14 right-0">
 				<canvas class="w-full h-full cursor-none" id="display"></canvas>
 			</div>
-			<div aria-live="polite">{lastMessage}</div>
 		{/if}
-		<div>
+		<div role="log">
 			{#each srMessages as message}
-					{message}
+					<p>{message}</p>p>
 			{/each}
 		</div>
 		<form on:submit={srSubmit}>
