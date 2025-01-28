@@ -313,11 +313,8 @@
 		{/if}
 		<div aria-live="polite" aria-atomic="false">
 			{#each srMessages as message (message)}
-				{#if (message == "\n")}
-					<br />
-				{:else}
 					<span>{message}</span>
-				{/if}
+					<br/>
 			{/each}
 		</div>
 		<form on:submit={srSubmit}>
